@@ -1,0 +1,4 @@
+Regression
+
+1. Closed Form Linear Regression = 191 MAE
+2. Gradient Descent Linear Regression = 90 MAE ?? how's this possible (optimal weights don't necessarily mean smallest error I guess)

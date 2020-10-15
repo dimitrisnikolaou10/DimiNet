@@ -14,7 +14,7 @@ class LinearRegression:
             self.model_name=regularize
         self.W = None
 
-    def fit(self, X, y, optimization="GradientDescent"):
+    def fit(self, X, y, optimization="GradientDescent", lambda_1=None, lambda_2=None):
         if self.normalize:
             Xmax, Xmin = X.max(), X.min()
             X = (X - Xmin)/(Xmax - Xmin)
@@ -23,12 +23,23 @@ class LinearRegression:
 
         self.W = np.zeros((X.shape[1], 1))
 
+        if self.model_name=="Lasso" and lambda_1 is None:
+            raise ValueError("Lasso regression required a regularization parameter lambda_1")
+        elif self.model_name=="Ridge" and lambda_2 is None:
+            raise ValueError("Ridge regression required a regularization parameter lambda 2")
+
+
         if optimization == "GradientDescent":
             optimizer = GradientDescent(X, y, self.model_name, W=self.W)
-            self.W, epoch_losses = optimizer.optimize(batch_size=30)
+            self.W, epoch_losses = optimizer.optimize(lambda_1 = lambda_1, lambda_2 = lambda_2, batch_size=30)
             self.trained = True
         elif optimization == "ClosedForm":
-            self.W = np.dot(np.dot(np.linalg.inv(np.dot(X.T, X)), X.T), y)
+            if self.model_name=="LinearRegression":
+                self.W = np.dot(np.dot(np.linalg.inv(np.dot(X.T, X)), X.T), y)
+            elif self.model_name=="Lasso":
+                raise Exception("Lasso does not generalise to a closed form solution.")
+            elif self.model_name=="Ridge":
+                self.W = np.dot(np.dot(np.linalg.inv(np.dot(X.T, X) + lambda_2*np.eye(X.shape[0])), X.T), y)
             epoch_losses = None
             self.trained = True
 

@@ -119,6 +119,25 @@ class GradientDescent:
 
         return mse
 
+    def LogisticRegressionStep(self, X, y, momentum):
+        h = self.__sigmoid_function(self.W, X)
+        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+
+        dw = 1/self.samples * np.dot(X.T, h - y)
+        dw = dw.reshape((self.W.shape[0], 1))
+        if self.gradients:
+            mdw = momentum*self.gradients[-1] + (1-momentum)*dw
+        else:
+            mdw = dw
+
+        self.gradients.append(mdw)
+
+        self.W -= self.lr*mdw
+
+        return loss
 
     def __standard_product(self, W, X):
-        return np.dot(X, self.W)
+        return np.dot(X, W)
+
+    def __sigmoid_function(self, W, X):
+        return 1 / (1 + np.exp(-np.dot(W, X)))

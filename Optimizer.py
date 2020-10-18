@@ -1,4 +1,5 @@
 import numpy as np
+import utils
 
 # TODO Adam
 class GradientDescent:
@@ -7,7 +8,7 @@ class GradientDescent:
         if W is not None:
             self.W = W
         self.y = y
-        self.model_name = model_name
+        self.mgitodel_name = model_name
         self.lr = lr
         self.epochs = epochs
         self.samples = y.shape[0]
@@ -49,10 +50,16 @@ class GradientDescent:
     def __ModelStep(self, X, y, momentum, lambda_1=None, lambda_2=None):
         if self.model_name == "LinearRegression":
             error = self.LinearRegressionStep(X, y, momentum)
-        elif self.model_name == "Lasso":
+        elif self.model_name == "LassoRegression":
             error = self.LassoStep(X, y, momentum, lambda_1)
-        elif self.model_name == "Ridge":
+        elif self.model_name == "RidgeRegression":
             error = self.RidgeStep(X, y, momentum, lambda_2)
+        elif self.model_name == "LogisticRegression":
+            error = self.LogisticRegressionStep(X, y, momentum)
+        elif self.model_name == "LassoClassification":
+            error = self.LassoClassificationStep(X, y, momentum, lambda_1)
+        elif self.model_name == "RidgeClassification":
+            error = self.RidgeClassificationStep(X, y, momentum, lambda_2)
         return error
 
 
@@ -77,7 +84,7 @@ class GradientDescent:
 
         return mse
 
-    def LassoStep(self, X, y, momentum, lambda_1):
+    def LassoRegressionStep(self, X, y, momentum, lambda_1):
         y_pred = self.__standard_product(self.W, X)
         losses = y_pred - y
 
@@ -98,7 +105,7 @@ class GradientDescent:
 
         return mse
 
-    def RidgeStep(self, X, y, momentum, lambda_2):
+    def RidgeRegressionStep(self, X, y, momentum, lambda_2):
         y_pred = self.__standard_product(self.W, X)
         losses = y_pred - y
 
@@ -120,7 +127,41 @@ class GradientDescent:
         return mse
 
     def LogisticRegressionStep(self, X, y, momentum):
-        h = self.__sigmoid_function(self.W, X)
+        h = utils.__sigmoid_function(self.W, X)
+        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+
+        dw = 1/self.samples * np.dot(X.T, h - y)
+        dw = dw.reshape((self.W.shape[0], 1))
+        if self.gradients:
+            mdw = momentum*self.gradients[-1] + (1-momentum)*dw
+        else:
+            mdw = dw
+
+        self.gradients.append(mdw)
+
+        self.W -= self.lr*mdw
+
+        return loss
+
+    def LassoClassificationStep(self, X, y, momentum, lambda_1):
+        h = utils.__sigmoid_function(self.W, X)
+        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+
+        dw = 1/self.samples * np.dot(X.T, h - y)
+        dw = dw.reshape((self.W.shape[0], 1))
+        if self.gradients:
+            mdw = momentum*self.gradients[-1] + (1-momentum)*dw
+        else:
+            mdw = dw
+
+        self.gradients.append(mdw)
+
+        self.W -= self.lr*mdw
+
+        return loss
+
+    def RidgeClassificationStep(self, X, y, momentum, lambda_2):
+        h = utils.__sigmoid_function(self.W, X)
         loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
 
         dw = 1/self.samples * np.dot(X.T, h - y)
@@ -139,5 +180,3 @@ class GradientDescent:
     def __standard_product(self, W, X):
         return np.dot(X, W)
 
-    def __sigmoid_function(self, W, X):
-        return 1 / (1 + np.exp(-np.dot(W, X)))

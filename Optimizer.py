@@ -8,13 +8,13 @@ class GradientDescent:
         if W is not None:
             self.W = W
         self.y = y
-        self.mgitodel_name = model_name
+        self.model_name = model_name
         self.lr = lr
         self.epochs = epochs
         self.samples = y.shape[0]
         self.gradients = []
 
-    def optimize(self, loss="mse", print_loss_every=100, batch_size=None, momentum=0.1, lr_decay=0.000001, early_stop=0, lambda_1=None, lambda_2=None):
+    def optimize(self, loss="mse", print_loss_every=100, batch_size=None, momentum=0, lr_decay=0.000001, early_stop=0, lambda_1=None, lambda_2=None):
         # loss function to choose, every how many epochs to print, how big should batch size be,
         # how much should I weight old gradients, how much should the learning rate decay every epoch
         # Every how many epochs should we check for early stop criteria (Note 3 check fails and we stop)
@@ -127,8 +127,9 @@ class GradientDescent:
         return mse
 
     def LogisticRegressionStep(self, X, y, momentum):
-        h = utils.__sigmoid_function(self.W, X)
-        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+        h = utils.sigmoid_function(self.W, X)
+        # print(h)
+        loss = 1/self.samples * (np.dot(-(y.T), np.log(h)) - np.dot((1-y).T, (1-h)))
 
         dw = 1/self.samples * np.dot(X.T, h - y)
         dw = dw.reshape((self.W.shape[0], 1))
@@ -145,7 +146,7 @@ class GradientDescent:
 
     def LassoClassificationStep(self, X, y, momentum, lambda_1):
         h = utils.__sigmoid_function(self.W, X)
-        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+        loss = np.dot(-(y.T), np.log(h)) - np.dot((1-y).T, (1-h))
 
         dw = 1/self.samples * np.dot(X.T, h - y)
         dw = dw.reshape((self.W.shape[0], 1))
@@ -162,7 +163,7 @@ class GradientDescent:
 
     def RidgeClassificationStep(self, X, y, momentum, lambda_2):
         h = utils.__sigmoid_function(self.W, X)
-        loss = np.dot(-y, np.log(h)) - np.dot((1-y), (1-h))
+        loss = np.dot(-(y.T), np.log(h)) - np.dot((1-y).T, (1-h))
 
         dw = 1/self.samples * np.dot(X.T, h - y)
         dw = dw.reshape((self.W.shape[0], 1))

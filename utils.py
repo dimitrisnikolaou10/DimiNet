@@ -1,5 +1,5 @@
 import numpy as np
 
 
-def __sigmoid_function(self, W, X):
-    return 1 / (1 + np.exp(-np.dot(W, X)))
+def sigmoid_function(W, X):
+    return 1 / (1 + np.exp(-np.dot(X, W)))

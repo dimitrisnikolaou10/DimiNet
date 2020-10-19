@@ -69,7 +69,7 @@ class LogisticRegression:
         elif regularize not in ["LassoClassification", "RidgeClassification"]:
             raise ValueError("Regularization method must take either the value Lasso or Ridge.")
         else:
-            self.model_name=regularize
+            self.model_name = regularize
         self.W = None
 
     def fit(self, X, y, optimization="GradientDescent", lambda_1=None, lambda_2=None):
@@ -102,7 +102,7 @@ class LogisticRegression:
             X = (X - Xmin)/(Xmax - Xmin)
         if self.intercept:
             X = np.append(X, np.ones((X.shape[0], 1)), axis=1)
-        y_pred = utils.__sigmoid_function(self.W, X)
+        y_pred = utils.sigmoid_function(self.W, X)
         y_pred[y_pred > 0.5] = 1
         y_pred[y_pred <= 0.5] = 0
-        return y_pred
+        return np.squeeze(y_pred)

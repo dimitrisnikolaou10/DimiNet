@@ -17,7 +17,7 @@ del df["Survived"]
 
 X = df.values
 # lr = LinearRegression()
-lr = LogisticRegression()
+lr = LogisticRegression(regularize="RidgeClassification")
 loss_curve = lr.fit(X, y)
 y_pred = lr.predict(X)
 

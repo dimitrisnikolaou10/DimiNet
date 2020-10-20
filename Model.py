@@ -32,6 +32,8 @@ class LinearRegression:
 
 
         if optimization == "GradientDescent":
+            if self.model_name=="LassoRegression":
+                raise Exception("Lasso loss function is not differentiable.")
             optimizer = GradientDescent(X, y, self.model_name, W=self.W)
             self.W, epoch_losses = optimizer.optimize(lambda_1 = lambda_1, lambda_2 = lambda_2, batch_size=30)
             self.trained = True
@@ -72,7 +74,7 @@ class LogisticRegression:
             self.model_name = regularize
         self.W = None
 
-    def fit(self, X, y, optimization="GradientDescent", lambda_1=None, lambda_2=None):
+    def fit(self, X, y, optimization="GradientDescent", lambda_1=0.001, lambda_2=0.001):
         if self.normalize:
             Xmax, Xmin = X.max(), X.min()
             X = (X - Xmin)/(Xmax - Xmin)
@@ -89,7 +91,7 @@ class LogisticRegression:
 
         if optimization == "GradientDescent":
             optimizer = GradientDescent(X, y, self.model_name, W=self.W)
-            self.W, epoch_losses = optimizer.optimize(lambda_1 = lambda_1, lambda_2 = lambda_2, batch_size=30)
+            self.W, epoch_losses = optimizer.optimize(lambda_2=lambda_2, batch_size=30)
             self.trained = True
 
         return epoch_losses

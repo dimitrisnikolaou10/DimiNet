@@ -11,7 +11,7 @@ def main():
     # y = df["Weight"].values.reshape((df["Weight"].values.shape[0], 1))
     # del df["Species"], df["Weight"]
 
-    df = pd.read_csv("../data/titanic.csv")
+    df = pd.read_csv("../lib/titanic.csv")
     del df["Unnamed: 0"]
     df.dropna(how="any", inplace=True)
     y = df["Survived"].values.reshape((df["Survived"].values.shape[0], 1))

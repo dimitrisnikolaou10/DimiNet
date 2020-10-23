@@ -23,7 +23,7 @@ def mean_absolute_error(errors):  # expecting errors to be in dict
     return mae
 
 
-def accuracy(y, y_pred):
+def accuracy(y, y_pred):  # numpy arrays as arguments
     match = 0
     all_examples = y.shape[0]
     for y, p in zip(y, y_pred):
@@ -34,7 +34,7 @@ def accuracy(y, y_pred):
     return acc
 
 
-def confusion_matrix(y, y_pred):
+def confusion_matrix(y, y_pred):  # numpy arrays as arguments
     y_actu = pd.Series(np.squeeze(y), name='Actual')
     y_pred = pd.Series(np.squeeze(y_pred), name='Predicted')
     df_confusion = pd.crosstab(y_actu, y_pred)

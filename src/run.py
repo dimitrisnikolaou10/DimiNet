@@ -1,6 +1,6 @@
 import pandas as pd
-from Model import LinearRegression, LogisticRegression
-from Metrics import plot_errors, mean_absolute_error, mean_squared_error, accuracy, confusion_matrix
+from src.Model import LogisticRegression
+from src.Metrics import accuracy, confusion_matrix
 
 
 def main():
@@ -11,7 +11,7 @@ def main():
     # y = df["Weight"].values.reshape((df["Weight"].values.shape[0], 1))
     # del df["Species"], df["Weight"]
 
-    df = pd.read_csv("data/titanic.csv")
+    df = pd.read_csv("../data/titanic.csv")
     del df["Unnamed: 0"]
     df.dropna(how="any", inplace=True)
     y = df["Survived"].values.reshape((df["Survived"].values.shape[0], 1))

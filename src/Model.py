@@ -1,6 +1,6 @@
-from Optimizer import GradientDescent
+from src.Optimizer import GradientDescent
 import numpy as np
-import utils
+from src import utils
 
 
 class LinearRegression:

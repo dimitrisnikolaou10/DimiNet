@@ -1,5 +1,6 @@
 import numpy as np
-import utils
+from src import utils
+
 
 # TODO Adam
 # TODO general cleanup

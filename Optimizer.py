@@ -2,8 +2,23 @@ import numpy as np
 import utils
 
 # TODO Adam
+# TODO general cleanup
+# TODO Unit tests
+# TODO Work in an environment, set up dependencies
+
 class GradientDescent:
-    def __init__(self, X, y, model_name, W = None, lr=0.001, epochs=np.power(10, 5)):
+    """
+    Common Optimisation method.
+    Details : https://towardsdatascience.com/understanding-the-mathematics-behind-gradient-descent-dde5dc9be06e
+    Allows for adaptive learning rate, mini-batch training, early stop, momentum and regularisation.
+     - X: The training data (numpy matrix)
+     - y: The labels for the training data (numpy array)
+     - model_name: The name of the model being optimised (string)
+     - W: The initial weights where the descent starts from (numpy matrix) [OPTIONAL]
+     - lr: Th learing rate (float) [OPTIONAL]
+     - epochs: Number of times we will run over our training set (integer) [OPTIONAL]
+    """
+    def __init__(self, X, y, model_name, W=None, lr=0.001, epochs=np.power(10, 7)):
         self.X = X
         if W is not None:
             self.W = W
@@ -15,9 +30,16 @@ class GradientDescent:
         self.gradients = []
 
     def optimize(self, loss="mse", print_loss_every=100, batch_size=None, momentum=0, lr_decay=0.000001, early_stop=0, lambda_2=None):
-        # loss function to choose, every how many epochs to print, how big should batch size be,
-        # how much should I weight old gradients, how much should the learning rate decay every epoch
-        # Every how many epochs should we check for early stop criteria (Note 3 check fails and we stop)
+        """
+        Method of Gradient Descent class that runs the optimization.
+        - loss: the loss function to be used (string) [OPTIONAL]
+        - print_loss_every: every how many epochs we should print the loss (integer) [OPTIONAL]
+        - batch_size: size of the batch that a training step will require (integer) [OPTIONAL]
+        - momentum: Extent at which past gradient will influece the current one (float) [OPTIONAL]
+        - lr_decay: % drop of learning rate on each run (float) [OPTIONAL]
+        - early_stop: every how many epochs should we check if it's time to stop (integer) [OPTIONAL]
+        - lambda_2: Ridge regularization parameter (float) [OPTIONAL]
+        """
         epoch_losses = {}
         early_stop_count = 0
         self.loss = loss
@@ -37,7 +59,7 @@ class GradientDescent:
             epoch_losses[i] = error
             if i % print_loss_every == 0:
                 print("Epoch {} error is {}.".format(i, error))
-            if early_stop != 0 and i % early_stop == 0 and i > 0:
+            if early_stop != 0 and i % early_stop == 0 and i > 0:  # check every early_stop epochs if we should stop
                 if error <= epoch_losses[-1]:
                     early_stop_count += 1
                 else:
@@ -48,6 +70,9 @@ class GradientDescent:
         return self.W, epoch_losses
 
     def __ModelStep(self, X, y, momentum, lambda_2=None):
+        """
+        Function that is not a method. Same for the specific steps below.
+        """
         if self.model_name == "LinearRegression":
             error = self.LinearRegressionStep(X, y, momentum)
         elif self.model_name == "RidgeRegression":

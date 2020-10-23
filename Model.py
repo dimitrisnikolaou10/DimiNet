@@ -4,6 +4,24 @@ import utils
 
 
 class LinearRegression:
+    """
+    Class for the Linear Regression model.
+    Methods:
+        - fit:
+            Runs the optimization
+            - X: training data (numpy array)
+            - y labels for training data (numpy array)
+            - optimization: algorithm used to optimize
+            - lambda_1: Lasso regularization parameter
+            - lambda_2: Ridge regularization parameter
+        - predict:
+            Generate predictions based on the trained weights.
+            - X: testing data (numpy array)
+    Constuctor args:
+        - regularize: Type of regularization (string)
+        - normalize: If we should normalize the data (boolean)
+        - intercept: If there should be an intercept (boolean)
+    """
     def __init__(self, regularize=None, normalize=True, intercept=True):
         self.normalize=normalize
         self.trained = False
@@ -62,8 +80,26 @@ class LinearRegression:
 
 
 class LogisticRegression:
+    """
+    Class for the Logistic Regression model.
+    Methods:
+        - fit:
+            Runs the optimization
+            - X: training data (numpy array)
+            - y: labels for training data (numpy array)
+            - optimization: algorithm used to optimize
+            - lambda_1: Lasso regularization parameter
+            - lambda_2: Ridge regularization parameter
+        - predict:
+            Generate predictions based on the trained weights.
+            - X: testing data (numpy array)
+    Constuctor args:
+        - regularize: Type of regularization (string)
+        - normalize: If we should normalize the data (boolean)
+        - intercept: If there should be an intercept (boolean)
+    """
     def __init__(self, regularize=None, normalize=True, intercept=True):
-        self.normalize=normalize
+        self.normalize = normalize
         self.trained = False
         self.intercept = intercept
         if not regularize:

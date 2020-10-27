@@ -19,7 +19,7 @@ class GradientDescent:
      - lr: Th learing rate (float) [OPTIONAL]
      - epochs: Number of times we will run over our training set (integer) [OPTIONAL]
     """
-    def __init__(self, X, y, model_name, W=None, lr=0.001, epochs=np.power(10, 7)):
+    def __init__(self, X, y, model_name, epochs, W=None, lr=0.001):
         self.X = X
         if W is not None:
             self.W = W

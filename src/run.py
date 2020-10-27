@@ -1,38 +1,51 @@
 import pandas as pd
-from src.Model import LogisticRegression
-from src.Metrics import accuracy, confusion_matrix
+import numpy as np
+from src.Model import LogisticRegression, LinearRegression
+from src.Metrics import accuracy, confusion_matrix, mean_squared_error, mean_absolute_error, plot_errors
 
 
 def main():
     print("Training has started.")
 
-    # df = pd.read_csv("data/fish.csv")
-    # df = pd.concat((df, pd.get_dummies(df.Species)), 1)
-    # y = df["Weight"].values.reshape((df["Weight"].values.shape[0], 1))
-    # del df["Species"], df["Weight"]
+    regression = False
 
-    df = pd.read_csv("../lib/titanic.csv")
-    del df["Unnamed: 0"]
-    df.dropna(how="any", inplace=True)
-    y = df["Survived"].values.reshape((df["Survived"].values.shape[0], 1))
-    del df["Survived"]
+    if regression:
 
-    X = df.values
-    # lr = LinearRegression()
-    lr = LogisticRegression(regularize="RidgeClassification")
-    loss_curve = lr.fit(X, y)
-    y_pred = lr.predict(X)
+        df = pd.read_csv("../lib/Fish.csv")
+        df = pd.concat((df, pd.get_dummies(df.Species)), 1)
+        y = df["Weight"].values.reshape((df["Weight"].values.shape[0], 1))
+        del df["Species"], df["Weight"]
 
-    # errors = []
-    # for i, y in zip(y, y_pred):
-    #     errors.append(i[0]-y[0])
+        X = df.values
+        lr = LinearRegression()
+        loss_curve = lr.fit(X, y, epochs=np.power(10, 3))
+        y_pred = lr.predict(X)
 
-    # plot_errors(errors)
-    # mean_absolute_error(errors)
-    # mean_squared_error(errors)
-    accuracy(y, y_pred)
-    cm = confusion_matrix(y, y_pred)
-    print(cm)
+        errors = []
+        for i, y in zip(y, y_pred):
+            errors.append(i[0]-y[0])
+
+        mean_absolute_error(errors)
+        mean_squared_error(errors)
+        # plot_errors(loss_curve)
+
+    else:
+
+        df = pd.read_csv("../lib/titanic.csv")
+        del df["Unnamed: 0"]
+        df.dropna(how="any", inplace=True)
+        y = df["Survived"].values.reshape((df["Survived"].values.shape[0], 1))
+        del df["Survived"]
+
+        X = df.values
+        lr = LogisticRegression(regularize="RidgeClassification")
+        loss_curve = lr.fit(X, y, print_loss_every=1000)
+        y_pred = lr.predict(X)
+
+
+        accuracy(y, y_pred)
+        cm = confusion_matrix(y, y_pred)
+        print(cm)
 
 
 if __name__ == "__main__":

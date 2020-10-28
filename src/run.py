@@ -7,7 +7,7 @@ from src.Metrics import accuracy, confusion_matrix, mean_squared_error, mean_abs
 def main():
     print("Training has started.")
 
-    regression = False
+    regression = True
 
     if regression:
 
@@ -18,7 +18,7 @@ def main():
 
         X = df.values
         lr = LinearRegression()
-        loss_curve = lr.fit(X, y, epochs=np.power(10, 3))
+        loss_curve = lr.fit(X, y, optimization="GradientDescent", epochs=np.power(10, 6))
         y_pred = lr.predict(X)
 
         errors = []

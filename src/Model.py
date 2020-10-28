@@ -1,4 +1,4 @@
-from src.Optimizer import GradientDescent
+from src.Optimizer import GradientDescent, Adam
 import numpy as np
 from src import utils
 
@@ -14,6 +14,8 @@ class LinearRegression:
             - optimization: algorithm used to optimize
             - lambda_1: Lasso regularization parameter
             - lambda_2: Ridge regularization parameter
+            - beta_1: Momentum parameter
+            - beta_2: Momement parameter
         - predict:
             Generate predictions based on the trained weights.
             - X: testing data (numpy array)
@@ -23,7 +25,7 @@ class LinearRegression:
         - intercept: If there should be an intercept (boolean)
     """
     def __init__(self, regularize=None, normalize=True, intercept=True):
-        self.normalize=normalize
+        self.normalize = normalize
         self.trained = False
         self.intercept = intercept
         if not regularize:
@@ -31,10 +33,12 @@ class LinearRegression:
         elif regularize not in ["LassoRegression", "RidgeRegression"]:
             raise ValueError("Regularization method must take either the value Lasso or Ridge.")
         else:
-            self.model_name=regularize
+            self.model_name = regularize
         self.W = None
 
-    def fit(self, X, y, optimization="GradientDescent", lambda_1=None, lambda_2=None, epochs=np.power(10, 3), print_loss_every=100):
+    def fit(self, X, y, optimization="GradientDescent",
+            lambda_1=None, lambda_2=None, beta_1=0.9, beta_2=0.999,
+            epochs=np.power(10, 3), print_loss_every=100):
         if self.normalize:
             Xmax, Xmin = X.max(), X.min()
             X = (X - Xmin)/(Xmax - Xmin)
@@ -48,11 +52,15 @@ class LinearRegression:
         elif self.model_name == "RidgeRegression" and lambda_2 is None:
             raise ValueError("Ridge regression required a regularization parameter lambda 2")
 
-        if optimization == "GradientDescent":
+        if optimization in ["GradientDescent", "Adam"]:
             if self.model_name == "LassoRegression":
                 raise Exception("Lasso loss function is not differentiable.")
-            optimizer = GradientDescent(X, y, self.model_name, epochs=epochs, W=self.W)
-            self.W, epoch_losses = optimizer.optimize(lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
+            if optimization == "GradientDescent":
+                optimizer = GradientDescent(X, y, self.model_name, epochs=epochs, W=self.W)
+                self.W, epoch_losses = optimizer.optimize(lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
+            else:
+                optimizer = Adam(X, y, self.model_name, epochs=epochs, W=self.W)
+                self.W, epoch_losses = optimizer.optimize(beta_1=beta_1, beta_2=beta_2, lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
             self.trained = True
         elif optimization == "ClosedForm":
             if self.model_name == "LinearRegression":
@@ -109,7 +117,9 @@ class LogisticRegression:
             self.model_name = regularize
         self.W = None
 
-    def fit(self, X, y, optimization="GradientDescent", lambda_1=0.001, lambda_2=0.001, epochs=np.power(10, 3), print_loss_every=100):
+    def fit(self, X, y, optimization="GradientDescent",
+            lambda_1=None, lambda_2=None, beta_1=0.9, beta_2=0.999,
+            epochs=np.power(10, 3), print_loss_every=100):
         if self.normalize:
             Xmax, Xmin = X.max(), X.min()
             X = (X - Xmin)/(Xmax - Xmin)
@@ -123,9 +133,15 @@ class LogisticRegression:
         elif self.model_name == "RidgeClassification" and lambda_2 is None:
             raise ValueError("Ridge classification required a regularization parameter lambda 2")
 
-        if optimization == "GradientDescent":
-            optimizer = GradientDescent(X, y, self.model_name, epochs=epochs, W=self.W)
-            self.W, epoch_losses = optimizer.optimize(lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
+        if optimization in ["GradientDescent", "Adam"]:
+            if self.model_name == "LassoRegression":
+                raise Exception("Lasso loss function is not differentiable.")
+            if optimization == "GradientDescent":
+                optimizer = GradientDescent(X, y, self.model_name, epochs=epochs, W=self.W)
+                self.W, epoch_losses = optimizer.optimize(lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
+            else:
+                optimizer = Adam(X, y, self.model_name, epochs=epochs, W=self.W)
+                self.W, epoch_losses = optimizer.optimize(beta_1=beta_1, beta_2=beta_2, lambda_2=lambda_2, batch_size=30, print_loss_every=print_loss_every)
             self.trained = True
 
         return epoch_losses

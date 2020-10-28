@@ -6,8 +6,15 @@ This module was not developed with the purpose of replacing other popular ML lib
 
 ## Models you will find
 <ul>
-<li>Linear Regression (+ Ridge & Closed Form solution)</li>
+<li>Linear Regression (+ Ridge)</li>
 <li>Logistic Regression (+ Ridge)</li>
+</ul>
+
+## Optimization methods
+<ul>
+<li>Gradient Descent</li>
+<li>Adam</li>
+<li>Closed Form (wherever possible)</li>
 </ul>
 
 ## Installation

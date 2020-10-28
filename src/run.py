@@ -3,6 +3,10 @@ import numpy as np
 from src.Model import LogisticRegression, LinearRegression
 from src.Metrics import accuracy, confusion_matrix, mean_squared_error, mean_absolute_error, plot_errors
 
+# TODO: SVM Reg + Class
+# TODO: Decision Tree
+# TODO: Fully Connected Layer (MLP) - For/Back prop
+# TODO: Convolutions
 
 def main():
     print("Training has started.")
